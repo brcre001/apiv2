@@ -201,7 +201,16 @@ class EventSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class OrganizationSerializer(serializers.ModelSerializer):
+class OrganizationPOSTSerializer(serializers.ModelSerializer):
+    academy = serializers.IntegerField(required=True)
+    name = serializers.CharField(required=True)
+
+    class Meta:
+        model = Organization
+        exclude = ()
+
+
+class OrganizationPUTSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         exclude = ()

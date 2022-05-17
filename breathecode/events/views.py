@@ -22,7 +22,8 @@ from breathecode.admissions.models import Academy, Cohort, CohortTimeSlot, Cohor
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import (EventSerializer, EventSmallSerializer, EventTypeSerializer, EventCheckinSerializer,
                           EventSmallSerializerNoAcademy, VenueSerializer, OrganizationBigSerializer,
-                          OrganizationSerializer, EventbriteWebhookSerializer, OrganizerSmallSerializer)
+                          OrganizationPOSTSerializer, OrganizationPUTSerializer, EventbriteWebhookSerializer,
+                          OrganizerSmallSerializer)
 from rest_framework.response import Response
 from rest_framework.views import APIView
 # from django.http import HttpResponse
@@ -425,7 +426,7 @@ class AcademyOrganizationView(APIView):
 
         org = Organization.objects.filter(academy__id=academy_id).first()
         if org is None:
-            raise ValidationException('Organization not found for this academy', 404)
+            raise ValidationException('Organization not found for this academy', slug='org-not-found')
 
         serializer = OrganizationBigSerializer(org, many=False)
         return Response(serializer.data)
@@ -437,7 +438,7 @@ class AcademyOrganizationView(APIView):
         if organization:
             raise ValidationException('Academy already has an organization asociated', slug='already-created')
 
-        serializer = OrganizationSerializer(data={**request.data, 'academy': academy_id})
+        serializer = OrganizationPOSTSerializer(data={**request.data, 'academy': academy_id})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -450,7 +451,7 @@ class AcademyOrganizationView(APIView):
         if not organization:
             raise ValidationException('Organization not found for this academy', slug='org-not-found')
 
-        serializer = OrganizationSerializer(organization, data=request.data)
+        serializer = OrganizationPUTSerializer(organization, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
