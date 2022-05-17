@@ -438,7 +438,12 @@ class AcademyOrganizationView(APIView):
         if organization:
             raise ValidationException('Academy already has an organization asociated', slug='already-created')
 
-        serializer = OrganizationPOSTSerializer(data={**request.data, 'academy': academy_id})
+        data = {}
+        for key in request.data:
+            data[key] = request.data[key]
+
+        serializer = OrganizationPOSTSerializer(data={**data, 'academy': academy_id})
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

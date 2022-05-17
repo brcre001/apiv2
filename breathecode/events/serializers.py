@@ -1,4 +1,5 @@
 from typing import Any
+from breathecode.admissions.models import Academy
 from breathecode.marketing.actions import validate_marketing_tags
 from breathecode.utils.validation_exception import ValidationException
 from .models import Event, Organization, EventbriteWebhook
@@ -202,7 +203,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class OrganizationPOSTSerializer(serializers.ModelSerializer):
-    academy = serializers.IntegerField(required=True)
+    academy = serializers.PrimaryKeyRelatedField(queryset=Academy.objects.all(), required=True)
     name = serializers.CharField(required=True)
 
     class Meta:
